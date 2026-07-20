@@ -164,6 +164,11 @@ svg {
   display: grid;
   gap: 2rem;
   align-items: center;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+}
+
+.hero-visual {
+  width: 100%;
 }
 
 .eyebrow {
@@ -508,6 +513,10 @@ svg {
   .hero-gallery .gallery-card:nth-child(7) {
     grid-column: auto;
     grid-row: auto;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
   }
 
   .benefits-grid {
