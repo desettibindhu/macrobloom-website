@@ -160,8 +160,55 @@ svg {
 .hero-grid {
   display: grid;
   gap: 2rem;
-  align-items: center;
+  align-items: stretch;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #0d3f18 0%, #159a41 100%);
+  padding: 2.5rem;
+  border-radius: 2rem;
+  box-shadow: var(--shadow);
+  min-height: 100%;
+  color: #ffffff;
+}
+
+.hero-copy .eyebrow {
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: 0.26em;
+}
+
+.hero-copy h1 {
+  color: #ffffff;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+}
+
+.hero-copy .hero-text {
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.95;
+}
+
+.hero-copy .hero-actions a {
+  color: #ffffff;
+}
+
+.hero-copy .btn-secondary {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.hero-copy .btn-secondary:hover,
+.hero-copy .btn-secondary:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.hero-copy .hero-highlights li {
+  color: #f4ffed;
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .hero-visual {
@@ -185,6 +232,10 @@ svg {
   line-height: 1.12;
   color: var(--dark);
   margin-bottom: 1rem;
+}
+
+.hero-copy h1 {
+  color: #ffffff;
 }
 
 .hero-text,
@@ -272,7 +323,7 @@ svg {
 
 .challenge-grid,
 .solution-cards {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .challenge-grid {
@@ -297,11 +348,11 @@ svg {
 .solution-cards {
   justify-self: center;
   display: grid;
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
-  gap: 1.75rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
   width: 100%;
-  max-width: 980px;
-  grid-auto-rows: 1fr;
+  max-width: 900px;
+  grid-auto-rows: auto;
   align-items: stretch;
 }
 
@@ -309,14 +360,14 @@ svg {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  min-height: 320px;
-  background: linear-gradient(180deg, #ffffff 0%, #f4fff2 100%);
+  gap: 0.9rem;
+  min-height: 200px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fff5 100%);
   border: 1px solid rgba(34, 197, 94, 0.18);
   border-left: 8px solid var(--green);
   border-radius: 2rem;
-  box-shadow: 0 46px 110px rgba(15, 23, 42, 0.16);
-  padding: 2.3rem;
+  box-shadow: 0 34px 80px rgba(15, 23, 42, 0.12);
+  padding: 1.8rem;
   overflow: hidden;
   background-image: radial-gradient(circle at 20% 10%, rgba(34, 197, 94, 0.08), transparent 18%), radial-gradient(circle at 80% 80%, rgba(16, 163, 127, 0.06), transparent 20%);
 }
@@ -324,59 +375,60 @@ svg {
 .feature-card::before {
   content: '';
   position: absolute;
-  top: -26px;
-  right: -26px;
-  width: 120px;
-  height: 120px;
+  top: -18px;
+  right: -18px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: rgba(34, 197, 94, 0.10);
 }
 
+.feature-card-top {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
 .feature-card .icon {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 16px;
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(16, 163, 127, 0.32));
   color: var(--green-dark);
-  font-size: 1.55rem;
+  font-size: 1.4rem;
 }
 
 .feature-card .feature-tagline {
-  margin: 0 0 0.7rem;
-  font-size: 0.92rem;
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--green-dark);
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
 }
 
 .feature-card h3 {
-  margin: 0 0 0.85rem;
-  line-height: 1.2;
+  margin: 0;
+  line-height: 1.18;
   color: var(--dark);
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   position: relative;
-  padding-left: 1rem;
+  padding-left: 0;
 }
 
 .feature-card h3::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.4rem;
-  width: 0.35rem;
-  height: 1.6rem;
-  border-radius: 999px;
-  background: linear-gradient(180deg, var(--green), var(--green-dark));
+  display: none;
 }
 
 .feature-card p {
   color: var(--text);
   line-height: 1.85;
   font-size: 1rem;
+  margin: 0;
 }
 
 @media (max-width: 900px) {
@@ -391,8 +443,8 @@ svg {
 }
 
 .challenge-card {
-  padding: 2rem;
-  min-height: 240px;
+  padding: 1.75rem;
+  min-height: 220px;
   border-radius: 1.75rem;
   background: white;
   border: 1px solid rgba(34, 197, 94, 0.12);
@@ -479,29 +531,20 @@ svg {
   min-height: 420px;
   padding: 2.25rem;
   border-radius: 2rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 38px 100px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.16);
+  border-left: 8px solid var(--green);
+  box-shadow: 0 40px 100px rgba(34, 197, 94, 0.12);
   background: linear-gradient(180deg, #ffffff 0%, #f8fff5 100%);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .plan-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 44px 118px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 44x 118px rgba(34, 197, 94, 0.14);
 }
 
 .plan-card .plan-card-head {
-  display: grid;
-  gap: 0.55rem;
-}
-
-.plan-tagline {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--green-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
+  margin-bottom: 0.75rem;
 }
 
 .plan-card h3 {
@@ -512,11 +555,16 @@ svg {
 
 .plan-price {
   display: inline-flex;
-  padding: 0.65rem 1rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
   border-radius: 999px;
-  background: rgba(34, 197, 94, 0.12);
-  color: var(--green-dark);
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--green-text);
   font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  white-space: nowrap;
   margin: 0;
 }
 
@@ -546,18 +594,6 @@ svg {
 
 .plan-card .btn {
   justify-self: start;
-}
-
-.plan-card.featured {
-  position: relative;
-  overflow: hidden;
-  border: none;
-  background: linear-gradient(180deg, #edfff1 0%, #f6fff8 100%);
-  box-shadow: 0 48px 122px rgba(34, 197, 94, 0.16);
-}
-
-.plan-card.featured .plan-price {
-  background: rgba(34, 197, 94, 0.18);
 }
 
 .plan-card.featured .btn {
