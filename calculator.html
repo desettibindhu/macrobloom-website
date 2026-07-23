@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Macro Bloom Calorie Calculator — calculate your daily calorie target and macro split with a fast, responsive tool for busy professionals."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#22C55E" />
+    <title>Macro Bloom Calorie Calculator</title>
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a href="index.html" class="logo" aria-label="Macro Bloom home">
+          <img src="resources/Macro_Bloom_Logo.png" alt="Macro Bloom logo" class="logo-image" />
+        </a>
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="index.html#home">Home</a>
+          <a href="index.html#plans">Macro Meal Plans</a>
+          <a href="calculator.html">Calorie Calculator</a>
+          <a href="index.html#contact">Contact</a>
+          <a class="btn btn-nav" href="index.html#contact">Order on WhatsApp</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="calculator-page">
+      <section class="section calculator-hero">
+        <div class="container calculator-hero-grid">
+          <div class="hero-copy reveal">
+            <p class="eyebrow">Calorie Calculator</p>
+            <h1>Know your daily calorie and macro targets</h1>
+            <p class="hero-text">
+              Get a personalized calorie goal, BMR, TDEE, and macro breakdown tailored for your fitness ambition.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#calculator">Start Calculating</a>
+              <a class="btn btn-secondary" href="#results">View Example Results</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="calculator">
+        <div class="container calculator-grid">
+          <article class="calculator-panel card reveal">
+            <div class="section-heading">
+              <p class="eyebrow">Personalized Nutrition</p>
+              <h2>Enter your details</h2>
+            </div>
+            <div class="calculator-unit-toggle" role="radiogroup" aria-label="Measurement units">
+              <button type="button" class="unit-btn active" data-unit="metric" aria-pressed="true">Metric</button>
+              <button type="button" class="unit-btn" data-unit="imperial" aria-pressed="false">Imperial</button>
+            </div>
+            <form class="calculator-form" id="calorie-form">
+              <div class="form-grid">
+                <fieldset class="form-group">
+                  <legend>Gender</legend>
+                  <label class="radio-label"><input type="radio" name="gender" value="male" checked /> Male</label>
+                  <label class="radio-label"><input type="radio" name="gender" value="female" /> Female</label>
+                </fieldset>
+                <label class="form-group">
+                  <span>Age</span>
+                  <input id="age" type="number" min="14" max="100" step="1" placeholder="25" required />
+                </label>
+                <div class="form-group height-group">
+                  <span>Height</span>
+                  <div class="height-inputs metric-fields">
+                    <input id="height-cm" type="number" min="100" max="250" step="1" placeholder="170" required />
+                    <span>cm</span>
+                  </div>
+                  <div class="height-inputs imperial-fields hidden">
+                    <input id="height-ft" type="number" min="3" max="8" step="1" placeholder="5" />
+                    <span>ft</span>
+                    <input id="height-in" type="number" min="0" max="11" step="1" placeholder="7" />
+                    <span>in</span>
+                  </div>
+                </div>
+                <div class="form-group weight-group">
+                  <span>Weight</span>
+                  <div class="weight-inputs metric-fields">
+                    <input id="weight-kg" type="number" min="35" max="200" step="0.5" placeholder="70" required />
+                    <span>kg</span>
+                  </div>
+                  <div class="weight-inputs imperial-fields hidden">
+                    <input id="weight-lbs" type="number" min="80" max="440" step="0.5" placeholder="154" />
+                    <span>lbs</span>
+                  </div>
+                </div>
+                <label class="form-group">
+                  <span>Activity Level</span>
+                  <select id="activity" required>
+                    <option value="1.2">Sedentary</option>
+                    <option value="1.375">Lightly Active</option>
+                    <option value="1.55">Moderately Active</option>
+                    <option value="1.725">Very Active</option>
+                    <option value="1.9">Athlete</option>
+                  </select>
+                </label>
+                <label class="form-group">
+                  <span>Goal</span>
+                  <select id="goal" required>
+                    <option value="maintain">Maintain Weight</option>
+                    <option value="lose">Lose Weight</option>
+                    <option value="gain">Gain Muscle</option>
+                  </select>
+                </label>
+                <label class="form-group">
+                  <span>Rate of Change</span>
+                  <select id="rate" required>
+                    <option value="mild">Mild</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="aggressive">Aggressive</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" id="calculate-results">Calculate</button>
+              </div>
+              <div class="form-error" id="calorie-error" aria-live="polite"></div>
+            </form>
+          </article>
+
+          <article class="results-panel card reveal" id="results">
+            <div class="results-header">
+              <div>
+                <p class="eyebrow">Your Daily Targets</p>
+                <h2>Target calories and macro split</h2>
+              </div>
+              <div class="results-actions">
+                <button class="btn btn-secondary" id="copy-results">Copy</button>
+                <button class="btn btn-secondary" id="share-results">Share</button>
+              </div>
+            </div>
+            <div class="summary-grid">
+              <div class="summary-card">
+                <span>BMR</span>
+                <strong id="bmr-value">--</strong>
+              </div>
+              <div class="summary-card">
+                <span>TDEE</span>
+                <strong id="tdee-value">--</strong>
+              </div>
+              <div class="summary-card highlight-card">
+                <span>Daily Calories</span>
+                <strong id="target-calories">--</strong>
+                <span class="badge" id="goal-badge">Maintenance</span>
+              </div>
+              <div class="summary-card">
+                <span>Protein</span>
+                <strong id="protein-grams">-- g</strong>
+              </div>
+              <div class="summary-card">
+                <span>Carbs</span>
+                <strong id="carbs-grams">-- g</strong>
+              </div>
+              <div class="summary-card">
+                <span>Fat</span>
+                <strong id="fat-grams">-- g</strong>
+              </div>
+            </div>
+            <div class="macro-visuals">
+              <div class="donut-card">
+                <div class="donut-chart" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" class="donut-svg">
+                    <circle class="donut-ring" cx="60" cy="60" r="46" />
+                    <circle class="donut-fat" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
+                    <circle class="donut-carb" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
+                    <circle class="donut-protein" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
+                  </svg>
+                  <div class="donut-center">
+                    <strong id="donut-calories">--</strong>
+                    <span>cal/day</span>
+                  </div>
+                </div>
+                <div class="donut-legend">
+                  <span class="legend-item"><em class="legend-dot protein"></em>Protein</span>
+                  <span class="legend-item"><em class="legend-dot carbs"></em>Carbs</span>
+                  <span class="legend-item"><em class="legend-dot fat"></em>Fat</span>
+                </div>
+              </div>
+              <div class="macro-bars">
+                <div class="progress-group">
+                  <div class="progress-label"><span>Protein</span><strong id="protein-percent">0%</strong></div>
+                  <div class="progress-track"><div class="progress-fill protein-fill" style="width: 0%"></div></div>
+                </div>
+                <div class="progress-group">
+                  <div class="progress-label"><span>Carbs</span><strong id="carbs-percent">0%</strong></div>
+                  <div class="progress-track"><div class="progress-fill carbs-fill" style="width: 0%"></div></div>
+                </div>
+                <div class="progress-group">
+                  <div class="progress-label"><span>Fat</span><strong id="fat-percent">0%</strong></div>
+                  <div class="progress-track"><div class="progress-fill fat-fill" style="width: 0%"></div></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-alt coverage-section reveal" id="coverage-section">
+        <div class="container">
+          <article class="coverage-panel card">
+            <div class="section-heading">
+              <p class="eyebrow">Macro Bloom Meal Coverage</p>
+              <h2>How Much Does Your Macro Bloom Meal Cover?</h2>
+              <p>See how a Macro Bloom lunch contributes toward your daily calorie and macro goals.</p>
+            </div>
+            <div class="meal-selector-grid">
+              <fieldset class="meal-selector" aria-label="Select Macro Bloom meal plan">
+                <legend>Choose a Macro Bloom meal</legend>
+                <label class="meal-option">
+                  <input type="radio" name="meal-plan" id="meal-plan-lean" value="lean" checked />
+                  <span>Lean (Fat Loss)</span>
+                </label>
+                <label class="meal-option">
+                  <input type="radio" name="meal-plan" id="meal-plan-balance" value="balance" />
+                  <span>Balance (Maintenance)</span>
+                </label>
+                <label class="meal-option">
+                  <input type="radio" name="meal-plan" id="meal-plan-bulk" value="bulk" />
+                  <span>Bulk (Muscle Gain)</span>
+                </label>
+              </fieldset>
+            </div>
+            <div class="coverage-grid">
+              <div class="coverage-summary-card">
+                <h3>Daily Target</h3>
+                <ul class="coverage-list">
+                  <li><span>Calories</span><strong id="coverage-target-calories">--</strong></li>
+                  <li><span>Protein</span><strong id="coverage-target-protein">-- g</strong></li>
+                  <li><span>Carbs</span><strong id="coverage-target-carbs">-- g</strong></li>
+                  <li><span>Fat</span><strong id="coverage-target-fat">-- g</strong></li>
+                </ul>
+              </div>
+              <div class="coverage-summary-card">
+                <h3>Selected Macro Bloom Meal</h3>
+                <div class="coverage-plan-name" id="coverage-meal-name">Lean Plan</div>
+                <ul class="coverage-list">
+                  <li><span>Calories</span><strong id="coverage-meal-calories">550</strong></li>
+                  <li><span>Protein</span><strong id="coverage-meal-protein">45 g</strong></li>
+                  <li><span>Carbs</span><strong id="coverage-meal-carbs">45 g</strong></li>
+                  <li><span>Fat</span><strong id="coverage-meal-fat">18 g</strong></li>
+                </ul>
+              </div>
+              <div class="coverage-summary-card">
+                <h3>Coverage Results</h3>
+                <ul class="coverage-list">
+                  <li><span>Calories Covered</span><strong id="coverage-calories-percent">--%</strong></li>
+                  <li><span>Protein Covered</span><strong id="coverage-protein-percent">--%</strong></li>
+                  <li><span>Carbs Covered</span><strong id="coverage-carbs-percent">--%</strong></li>
+                  <li><span>Fat Covered</span><strong id="coverage-fat-percent">--%</strong></li>
+                </ul>
+              </div>
+            </div>
+            <div class="coverage-visuals">
+              <div class="coverage-bars">
+                <div class="coverage-summary-row">
+                  <p class="coverage-card-title">Meal coverage summary</p>
+                  <button class="btn btn-secondary" id="share-coverage-report" type="button">Share coverage report</button>
+                </div>
+                <p class="coverage-message" id="coverage-summary-text">Select a meal plan to see coverage and remaining nutrition.</p>
+                <div class="remaining-nutrition">
+                  <h3>Remaining Nutrition</h3>
+                  <ul class="remaining-list">
+                    <li><span>Calories</span><strong id="remaining-calories">-- kcal</strong></li>
+                    <li><span>Protein</span><strong id="remaining-protein">-- g</strong></li>
+                    <li><span>Carbs</span><strong id="remaining-carbs">-- g</strong></li>
+                    <li><span>Fat</span><strong id="remaining-fat">-- g</strong></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-alt calculator-education reveal">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Nutrition Basics</p>
+            <h2>What your numbers mean</h2>
+          </div>
+          <div class="education-grid">
+            <article class="education-card">
+              <h3>Basal Metabolic Rate (BMR)</h3>
+              <p>The calories your body needs at rest to support breathing, circulation, and cell maintenance.</p>
+            </article>
+            <article class="education-card">
+              <h3>Total Daily Energy Expenditure (TDEE)</h3>
+              <p>This is your BMR adjusted for activity — the energy needed to maintain your current lifestyle.</p>
+            </article>
+            <article class="education-card">
+              <h3>Calories & body composition</h3>
+              <p>A calorie deficit promotes fat loss, maintenance preserves weight, and a surplus supports muscle gain.</p>
+            </article>
+            <article class="education-card">
+              <h3>Personalization matters</h3>
+              <p>These estimates guide your nutrition, but individual needs can vary based on metabolism, stress, and training.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section calculator-cta reveal">
+        <div class="container cta-panel card">
+          <div>
+            <p class="eyebrow">Your Lunch Is Handled</p>
+            <h2>Let Macro Bloom Take Care of the Macros</h2>
+            <p>Macro Bloom meals are designed to deliver a significant portion of your daily nutrition targets with accurate calorie and macro tracking.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="index.html#contact">Order My Meal Plan</a>
+            <a class="btn btn-secondary" href="index.html#plans">View This Week's Menu</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <div>
+          <h3>Macro Bloom</h3>
+          <p>Healthy Macro Meals. Smarter Nutrition.</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html#home">Home</a>
+          <a href="index.html#plans">Plans</a>
+          <a href="index.html#contact">Contact</a>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <p>© <span id="year"></span> Macro Bloom. All rights reserved.</p>
+        <p>Social: <a href="#">Instagram</a> · <a href="#">LinkedIn</a></p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
