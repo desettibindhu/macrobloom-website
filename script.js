@@ -1,55 +1,85 @@
-const menuToggle = document.querySelector('.menu-toggle');
-const navLinks = document.querySelector('.nav-links');
+// Wait for DOM to be fully loaded before running any code
+window.addEventListener('DOMContentLoaded', () => {
+  // Hamburger menu
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelector('.nav-links');
 
-if (menuToggle && navLinks) {
-  menuToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('active');
-    menuToggle.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  navLinks.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('active');
-      menuToggle.setAttribute('aria-expanded', 'false');
-    });
-  });
-}
-
-const faqItems = document.querySelectorAll('.faq-item');
-faqItems.forEach((item) => {
-  item.querySelector('.faq-question').addEventListener('click', () => {
-    const isActive = item.classList.contains('active');
-
-    faqItems.forEach((faq) => {
-      faq.classList.remove('active');
-      faq.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('active');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
 
-    if (!isActive) {
-      item.classList.add('active');
-      item.querySelector('.faq-question').setAttribute('aria-expanded', 'true');
-    }
-  });
-});
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
 
-const revealItems = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
+  // FAQ accordions
+  const faqItems = document.querySelectorAll('.faq-item');
+  if (faqItems.length > 0) {
+    faqItems.forEach((item) => {
+      const faqQuestion = item.querySelector('.faq-question');
+      if (faqQuestion) {
+        faqQuestion.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+
+          faqItems.forEach((faq) => {
+            faq.classList.remove('active');
+            const faqQ = faq.querySelector('.faq-question');
+            if (faqQ) faqQ.setAttribute('aria-expanded', 'false');
+          });
+
+          if (!isActive) {
+            item.classList.add('active');
+            faqQuestion.setAttribute('aria-expanded', 'true');
+          }
+        });
       }
     });
-  },
-  { threshold: 0.15 }
-);
+  }
 
-revealItems.forEach((item) => {
-  observer.observe(item);
-  item.classList.add('is-visible');
+  // Reveal animations
+  const revealItems = document.querySelectorAll('.reveal');
+  if (revealItems.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    revealItems.forEach((item) => {
+      observer.observe(item);
+      item.classList.add('is-visible');
+    });
+  }
+
+  // Year in footer
+  const yearElement = document.getElementById('year');
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+  }
+
+  // Initialize calculator if on calculator page
+  try {
+    if (typeof hydrateSavedResults === 'function') {
+      hydrateSavedResults();
+    }
+    if (typeof bindCalculatorEvents === 'function') {
+      bindCalculatorEvents();
+    }
+  } catch (error) {
+    console.error('Error initializing calculator:', error);
+  }
 });
-
-document.getElementById('year').textContent = new Date().getFullYear();
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -186,14 +216,10 @@ function updateMealCoverage() {
   updateBarFills('comparison-carbs-meal', 'comparison-carbs-remaining', mealCarbsWidth);
   updateBarFills('comparison-fat-meal', 'comparison-fat-remaining', mealFatWidth);
 
-  const caloriesCoverage = calories ? clampCoverage((selectedPlan.calories / calories) * 100) : 0;
-  const proteinCoverage = proteinGrams ? clampCoverage((selectedPlan.protein / proteinGrams) * 100) : 0;
-  const carbsCoverage = carbsGrams ? clampCoverage((selectedPlan.carbs / carbsGrams) * 100) : 0;
-  const fatCoverage = fatGrams ? clampCoverage((selectedPlan.fat / fatGrams) * 100) : 0;
-
+  // Use the already calculated percentages for the summary text
   setCoverageLabelText('coverage-summary-text', 
     `Your Macro Bloom ${selectedPlan.name} provides ${selectedPlan.calories} calories, ${selectedPlan.protein}g protein, ${selectedPlan.carbs}g carbs, and ${selectedPlan.fat}g fat. ` +
-    `This meal covers ${caloriesCoverage}% of your daily calorie target and ${proteinCoverage}% of your daily protein goal.`
+    `This meal covers ${caloriesPercent}% of your daily calorie target and ${proteinPercent}% of your daily protein goal.`
   );
 }
 
@@ -207,9 +233,15 @@ function updateDonut(percentProtein, percentCarbs, percentFat) {
   const carbsCircle = document.querySelector('.donut-carb');
   const fatCircle = document.querySelector('.donut-fat');
 
-  proteinCircle.style.strokeDasharray = `${proteinStroke} ${circumference - proteinStroke}`;
-  carbsCircle.style.strokeDasharray = `${carbsStroke} ${circumference - carbsStroke}`;
-  fatCircle.style.strokeDasharray = `${fatStroke} ${circumference - fatStroke}`;
+  if (proteinCircle) {
+    proteinCircle.style.strokeDasharray = `${proteinStroke} ${circumference - proteinStroke}`;
+  }
+  if (carbsCircle) {
+    carbsCircle.style.strokeDasharray = `${carbsStroke} ${circumference - carbsStroke}`;
+  }
+  if (fatCircle) {
+    fatCircle.style.strokeDasharray = `${fatStroke} ${circumference - fatStroke}`;
+  }
 }
 
 function updateProgressBar(selector, percent) {
@@ -218,100 +250,144 @@ function updateProgressBar(selector, percent) {
 }
 
 function calculateCalories() {
-  const ageInput = document.getElementById('age');
-  const gender = document.querySelector('input[name="gender"]:checked').value;
-  const activity = parseFloat(document.getElementById('activity').value);
-  const goal = document.getElementById('goal').value;
-  const rate = document.getElementById('rate').value;
+  try {
+    const ageInput = document.getElementById('age');
+    const genderInput = document.querySelector('input[name="gender"]:checked');
+    const activityInput = document.getElementById('activity');
+    const goalInput = document.getElementById('goal');
+    const rateInput = document.getElementById('rate');
+    
+    if (!ageInput || !genderInput || !activityInput || !goalInput || !rateInput) {
+      console.error('Required form elements not found');
+      return;
+    }
+    
+    const gender = genderInput.value;
+    const activity = parseFloat(activityInput.value);
+    const goal = goalInput.value;
+    const rate = rateInput.value;
 
-  const unitMode = document.querySelector('.unit-btn.active').dataset.unit;
-  const age = clamp(Number(ageInput.value), 14, 100);
+    const unitModeBtn = document.querySelector('.unit-btn.active');
+    const unitMode = unitModeBtn ? unitModeBtn.dataset.unit : 'metric';
+    const age = clamp(Number(ageInput.value), 14, 100);
 
-  let weightKg = 0;
-  let heightCm = 0;
+    let weightKg = 0;
+    let heightCm = 0;
 
-  if (unitMode === 'metric') {
-    weightKg = Number(document.getElementById('weight-kg').value);
-    heightCm = Number(document.getElementById('height-cm').value);
-  } else {
-    const weightLbs = Number(document.getElementById('weight-lbs').value);
-    const heightFt = Number(document.getElementById('height-ft').value);
-    const heightIn = Number(document.getElementById('height-in').value);
-    weightKg = weightLbs / 2.20462;
-    heightCm = heightFt * 30.48 + heightIn * 2.54;
+    if (unitMode === 'metric') {
+      weightKg = Number(document.getElementById('weight-kg').value);
+      heightCm = Number(document.getElementById('height-cm').value);
+    } else {
+      const weightLbs = Number(document.getElementById('weight-lbs').value);
+      const heightFt = Number(document.getElementById('height-ft').value);
+      const heightIn = Number(document.getElementById('height-in').value);
+      weightKg = weightLbs / 2.20462;
+      heightCm = heightFt * 30.48 + heightIn * 2.54;
+    }
+
+    const errorMessage = document.getElementById('calorie-error');
+    if (errorMessage) {
+      errorMessage.textContent = '';
+    }
+
+    if (!weightKg || !heightCm || !age) {
+      if (errorMessage) {
+        errorMessage.textContent = 'Please complete age, height, and weight to calculate your target calories.';
+      }
+      return;
+    }
+
+    const bmr = Math.round((10 * weightKg) + (6.25 * heightCm) - (5 * age) + (gender === 'male' ? 5 : -161));
+    const tdee = Math.round(bmr * activity);
+
+    const goalOffsets = {
+      lose: { mild: -250, moderate: -500, aggressive: -750 },
+      gain: { mild: 250, moderate: 500, aggressive: 750 },
+      maintain: { mild: 0, moderate: 0, aggressive: 0 },
+    };
+
+    const calories = Math.round(tdee + (goalOffsets[goal][rate] || 0));
+    const macroRatios = updateMacros(goal);
+
+    const proteinCalories = Math.round(calories * macroRatios.protein);
+    const carbsCalories = Math.round(calories * macroRatios.carbs);
+    const fatCalories = Math.round(calories * macroRatios.fat);
+
+    const proteinGrams = Math.round(proteinCalories / 4);
+    const carbsGrams = Math.round(carbsCalories / 4);
+    const fatGrams = Math.round(fatCalories / 9);
+
+    const bmrValue = document.getElementById('bmr-value');
+    const tdeeValue = document.getElementById('tdee-value');
+    const targetCalories = document.getElementById('target-calories');
+    const proteinGramsEl = document.getElementById('protein-grams');
+    const carbsGramsEl = document.getElementById('carbs-grams');
+    const fatGramsEl = document.getElementById('fat-grams');
+    const donutCalories = document.getElementById('donut-calories');
+
+    if (bmrValue) bmrValue.textContent = formatNumber(bmr);
+    if (tdeeValue) tdeeValue.textContent = formatNumber(tdee);
+    if (targetCalories) targetCalories.textContent = formatNumber(calories);
+    if (proteinGramsEl) proteinGramsEl.textContent = `${formatNumber(proteinGrams)} g`;
+    if (carbsGramsEl) carbsGramsEl.textContent = `${formatNumber(carbsGrams)} g`;
+    if (fatGramsEl) fatGramsEl.textContent = `${formatNumber(fatGrams)} g`;
+    if (donutCalories) donutCalories.textContent = formatNumber(calories);
+
+    const proteinPercent = Math.round(macroRatios.protein * 100);
+    const carbsPercent = Math.round(macroRatios.carbs * 100);
+    const fatPercent = Math.round(macroRatios.fat * 100);
+    
+    const proteinPercentEl = document.getElementById('protein-percent');
+    const carbsPercentEl = document.getElementById('carbs-percent');
+    const fatPercentEl = document.getElementById('fat-percent');
+    
+    if (proteinPercentEl) proteinPercentEl.textContent = `${proteinPercent}%`;
+    if (carbsPercentEl) carbsPercentEl.textContent = `${carbsPercent}%`;
+    if (fatPercentEl) fatPercentEl.textContent = `${fatPercent}%`;
+
+    updateProgressBar('.protein-fill', proteinPercent);
+    updateProgressBar('.carbs-fill', carbsPercent);
+    updateProgressBar('.fat-fill', fatPercent);
+    updateDonut(proteinPercent, carbsPercent, fatPercent);
+
+    const goalBadge = document.getElementById('goal-badge');
+    if (goalBadge) {
+      goalBadge.textContent = goal === 'lose' ? 'Fat Loss' : goal === 'gain' ? 'Muscle Gain' : 'Maintenance';
+    }
+
+    // Only update meal coverage if the meal plan elements exist
+    if (document.querySelector('input[name="meal-plan"]')) {
+      setDefaultMealPlan(goal);
+      updateMealCoverage();
+    }
+
+    localStorage.setItem('macroCalcResults', JSON.stringify({
+      bmr,
+      tdee,
+      calories,
+      proteinGrams,
+      carbsGrams,
+      fatGrams,
+      goal,
+      rate,
+      activity,
+      gender,
+      age,
+      weightKg,
+      heightCm,
+      unitMode,
+    }));
+  } catch (error) {
+    console.error('Error in calculateCalories:', error);
+    const errorMessage = document.getElementById('calorie-error');
+    if (errorMessage) {
+      errorMessage.textContent = 'An error occurred while calculating. Please try again.';
+    }
   }
-
-  const errorMessage = document.getElementById('calorie-error');
-  errorMessage.textContent = '';
-
-  if (!weightKg || !heightCm || !age) {
-    errorMessage.textContent = 'Please complete age, height, and weight to calculate your target calories.';
-    return;
-  }
-
-  const bmr = Math.round((10 * weightKg) + (6.25 * heightCm) - (5 * age) + (gender === 'male' ? 5 : -161));
-  const tdee = Math.round(bmr * activity);
-
-  const goalOffsets = {
-    lose: { mild: -250, moderate: -500, aggressive: -750 },
-    gain: { mild: 250, moderate: 500, aggressive: 750 },
-    maintain: { mild: 0, moderate: 0, aggressive: 0 },
-  };
-
-  const calories = Math.round(tdee + (goalOffsets[goal][rate] || 0));
-  const macroRatios = updateMacros(goal);
-
-  const proteinCalories = Math.round(calories * macroRatios.protein);
-  const carbsCalories = Math.round(calories * macroRatios.carbs);
-  const fatCalories = Math.round(calories * macroRatios.fat);
-
-  const proteinGrams = Math.round(proteinCalories / 4);
-  const carbsGrams = Math.round(carbsCalories / 4);
-  const fatGrams = Math.round(fatCalories / 9);
-
-  document.getElementById('bmr-value').textContent = formatNumber(bmr);
-  document.getElementById('tdee-value').textContent = formatNumber(tdee);
-  document.getElementById('target-calories').textContent = formatNumber(calories);
-  document.getElementById('protein-grams').textContent = `${formatNumber(proteinGrams)} g`;
-  document.getElementById('carbs-grams').textContent = `${formatNumber(carbsGrams)} g`;
-  document.getElementById('fat-grams').textContent = `${formatNumber(fatGrams)} g`;
-  document.getElementById('donut-calories').textContent = formatNumber(calories);
-
-  const proteinPercent = Math.round(macroRatios.protein * 100);
-  const carbsPercent = Math.round(macroRatios.carbs * 100);
-  const fatPercent = Math.round(macroRatios.fat * 100);
-  document.getElementById('protein-percent').textContent = `${proteinPercent}%`;
-  document.getElementById('carbs-percent').textContent = `${carbsPercent}%`;
-  document.getElementById('fat-percent').textContent = `${fatPercent}%`;
-
-  updateProgressBar('.protein-fill', proteinPercent);
-  updateProgressBar('.carbs-fill', carbsPercent);
-  updateProgressBar('.fat-fill', fatPercent);
-  updateDonut(proteinPercent, carbsPercent, fatPercent);
-
-  const goalBadge = document.getElementById('goal-badge');
-  goalBadge.textContent = goal === 'lose' ? 'Fat Loss' : goal === 'gain' ? 'Muscle Gain' : 'Maintenance';
-
-  setDefaultMealPlan(goal);
-  updateMealCoverage();
-
-  localStorage.setItem('macroCalcResults', JSON.stringify({
-    bmr,
-    tdee,
-    calories,
-    proteinGrams,
-    carbsGrams,
-    fatGrams,
-    goal,
-    rate,
-    activity,
-    gender,
-    age,
-    weightKg,
-    heightCm,
-    unitMode,
-  }));
 }
+
+// Make calculateCalories globally accessible
+window.calculateCalories = calculateCalories;
 
 function setUnitMode(unit) {
   document.querySelectorAll('.unit-btn').forEach((btn) => {
@@ -330,30 +406,51 @@ function setUnitMode(unit) {
 }
 
 function hydrateSavedResults() {
-  const saved = localStorage.getItem('macroCalcResults');
-  if (!saved) return;
+  try {
+    const saved = localStorage.getItem('macroCalcResults');
+    if (!saved) return;
 
-  const data = JSON.parse(saved);
-  if (!data) return;
+    const data = JSON.parse(saved);
+    if (!data) return;
 
-  const unitMode = data.unitMode || 'metric';
-  setUnitMode(unitMode);
-  document.querySelector(`.unit-btn[data-unit="${unitMode}"]`).classList.add('active');
-  document.querySelector(`#${unitMode === 'metric' ? 'height-cm' : 'height-ft'}`).value = unitMode === 'metric' ? Math.round(data.heightCm) : Math.floor(data.heightCm / 30.48);
-  if (unitMode === 'imperial') {
-    document.getElementById('height-in').value = Math.round((data.heightCm / 2.54) % 12);
-    document.getElementById('weight-lbs').value = Math.round(data.weightKg * 2.20462);
-  } else {
-    document.getElementById('height-cm').value = Math.round(data.heightCm);
-    document.getElementById('weight-kg').value = Math.round(data.weightKg);
+    const unitMode = data.unitMode || 'metric';
+    setUnitMode(unitMode);
+    
+    const unitBtn = document.querySelector(`.unit-btn[data-unit="${unitMode}"]`);
+    if (unitBtn) unitBtn.classList.add('active');
+    
+    if (unitMode === 'imperial') {
+      const heightFt = document.getElementById('height-ft');
+      const heightIn = document.getElementById('height-in');
+      const weightLbs = document.getElementById('weight-lbs');
+      
+      if (heightFt) heightFt.value = Math.floor(data.heightCm / 30.48);
+      if (heightIn) heightIn.value = Math.round((data.heightCm / 2.54) % 12);
+      if (weightLbs) weightLbs.value = Math.round(data.weightKg * 2.20462);
+    } else {
+      const heightCm = document.getElementById('height-cm');
+      const weightKg = document.getElementById('weight-kg');
+      
+      if (heightCm) heightCm.value = Math.round(data.heightCm);
+      if (weightKg) weightKg.value = Math.round(data.weightKg);
+    }
+
+    const genderInput = document.querySelector(`input[name="gender"][value="${data.gender}"]`);
+    const ageInput = document.getElementById('age');
+    const activityInput = document.getElementById('activity');
+    const goalInput = document.getElementById('goal');
+    const rateInput = document.getElementById('rate');
+    
+    if (genderInput) genderInput.checked = true;
+    if (ageInput) ageInput.value = data.age;
+    if (activityInput) activityInput.value = data.activity;
+    if (goalInput) goalInput.value = data.goal;
+    if (rateInput) rateInput.value = data.rate;
+    
+    calculateCalories();
+  } catch (error) {
+    console.error('Error loading saved results:', error);
   }
-
-  document.querySelector(`input[name="gender"][value="${data.gender}"]`).checked = true;
-  document.getElementById('age').value = data.age;
-  document.getElementById('activity').value = data.activity;
-  document.getElementById('goal').value = data.goal;
-  document.getElementById('rate').value = data.rate;
-  calculateCalories();
 }
 
 function copyResults() {
@@ -409,7 +506,6 @@ function bindCalculatorEvents() {
   document.querySelectorAll('.unit-btn').forEach((button) => {
     button.addEventListener('click', () => {
       setUnitMode(button.dataset.unit);
-      calculateCalories();
     });
   });
 
@@ -435,15 +531,22 @@ function bindCalculatorEvents() {
 
   document.querySelectorAll('#calorie-form input, #calorie-form select').forEach((element) => {
     element.addEventListener('change', () => {
-      calculateCalories();
+      const ageInput = document.getElementById('age');
+      const weightKg = document.getElementById('weight-kg');
+      const heightCm = document.getElementById('height-cm');
+      const weightLbs = document.getElementById('weight-lbs');
+      const heightFt = document.getElementById('height-ft');
+      
+      if ((ageInput && ageInput.value) && 
+          ((weightKg && weightKg.value) || (weightLbs && weightLbs.value)) && 
+          ((heightCm && heightCm.value) || (heightFt && heightFt.value))) {
+        calculateCalories();
+      }
     });
   });
 
-  document.getElementById('copy-results').addEventListener('click', copyResults);
-  document.getElementById('share-results').addEventListener('click', shareResults);
+  const copyBtn = document.getElementById('copy-results');
+  const shareBtn = document.getElementById('share-results');
+  if (copyBtn) copyBtn.addEventListener('click', copyResults);
+  if (shareBtn) shareBtn.addEventListener('click', shareResults);
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-  hydrateSavedResults();
-  bindCalculatorEvents();
-});
