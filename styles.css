@@ -954,18 +954,21 @@ svg {
   align-items: start;
 }
 
+.calculator-panel {
+  will-change: auto;
+}
+
 .card {
   background: white;
   border: 1px solid rgba(34, 197, 94, 0.12);
   border-radius: 1.5rem;
   box-shadow: 0 10px 40px rgba(15, 23, 42, 0.06);
   padding: 2rem;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 
 .card:hover {
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
-  transform: translateY(-2px);
 }
 
 .calculator-unit-toggle {
@@ -1004,8 +1007,7 @@ svg {
 
 .form-group,
 .height-group,
-.weight-group,
-fieldset {
+.weight-group {
   display: grid;
   gap: 0.8rem;
 }
@@ -1014,6 +1016,23 @@ fieldset {
   border: 1px solid rgba(31, 41, 55, 0.08);
   border-radius: 1.25rem;
   padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+fieldset legend {
+  margin-bottom: 0.25rem;
+}
+
+fieldset .radio-label {
+  display: inline-flex;
+}
+
+.gender-options {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 legend {
@@ -1022,12 +1041,17 @@ legend {
 }
 
 .radio-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
   color: var(--text);
-  justify-self: start;
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+  margin: 0;
+  flex-shrink: 0;
 }
 
 label span,
@@ -1123,15 +1147,18 @@ button:focus {
 .summary-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
 }
 
 .summary-card {
   background: #f8fff2;
   border-radius: 1.5rem;
   padding: 1.35rem;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
+  align-items: flex-start;
 }
 
 .summary-card span {
@@ -1142,6 +1169,7 @@ button:focus {
 .summary-card strong {
   font-size: 1.55rem;
   color: var(--dark);
+  white-space: nowrap;
 }
 
 .highlight-card {
@@ -1190,8 +1218,9 @@ button:focus {
 }
 
 .donut-ring,
-.donut-fat,
-.donut-carb,
+.donut-complex-carbs,
+.donut-healthy-fats,
+.donut-fiber,
 .donut-protein {
   fill: none;
   stroke-width: 16;
@@ -1203,17 +1232,22 @@ button:focus {
 }
 
 .donut-protein {
-  stroke: #22c55e;
+  stroke: #5FA66A;
   stroke-dasharray: 90 289;
 }
 
-.donut-carb {
-  stroke: #f59e0b;
+.donut-fiber {
+  stroke: #2F5F4A;
+  stroke-dasharray: 0 289;
+}
+
+.donut-healthy-fats {
+  stroke: #F36F52;
   stroke-dasharray: 120 289;
 }
 
-.donut-fat {
-  stroke: #ef4444;
+.donut-complex-carbs {
+  stroke: #F2C04C;
   stroke-dasharray: 79 289;
 }
 
@@ -1260,15 +1294,19 @@ button:focus {
 }
 
 .legend-dot.protein {
-  background: #22c55e;
+  background: #5FA66A;
 }
 
-.legend-dot.carbs {
-  background: #f59e0b;
+.legend-dot.fiber {
+  background: #2F5F4A;
 }
 
-.legend-dot.fat {
-  background: #ef4444;
+.legend-dot.healthy-fats {
+  background: #F36F52;
+}
+
+.legend-dot.complex-carbs {
+  background: #F2C04C;
 }
 
 .macro-bars {
@@ -1301,15 +1339,19 @@ button:focus {
 }
 
 .protein-fill {
-  background: #22c55e;
+  background: #5FA66A;
 }
 
-.carbs-fill {
-  background: #f59e0b;
+.fiber-fill {
+  background: #2F5F4A;
 }
 
-.fat-fill {
-  background: #ef4444;
+.healthy-fats-fill {
+  background: #F36F52;
+}
+
+.complex-carbs-fill {
+  background: #F2C04C;
 }
 
 /* Meal Recommendation Section */
@@ -1418,15 +1460,19 @@ button:focus {
 }
 
 .contribution-fill.protein-fill {
-  background: #22c55e;
+  background: #5FA66A;
 }
 
-.contribution-fill.carbs-fill {
-  background: #f59e0b;
+.contribution-fill.fiber-fill {
+  background: #2F5F4A;
 }
 
-.contribution-fill.fat-fill {
-  background: #ef4444;
+.contribution-fill.healthy-fats-fill {
+  background: #F36F52;
+}
+
+.contribution-fill.complex-carbs-fill {
+  background: #F2C04C;
 }
 
 .contribution-text {

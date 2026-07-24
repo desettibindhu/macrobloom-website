@@ -69,8 +69,10 @@
               <div class="form-grid">
                 <fieldset class="form-group">
                   <legend>Gender</legend>
-                  <label class="radio-label"><input type="radio" name="gender" value="male" checked /> Male</label>
-                  <label class="radio-label"><input type="radio" name="gender" value="female" /> Female</label>
+                  <div class="gender-options">
+                    <label class="radio-label"><input type="radio" name="gender" value="male" checked /> Male</label>
+                    <label class="radio-label"><input type="radio" name="gender" value="female" /> Female</label>
+                  </div>
                 </fieldset>
                 <label class="form-group">
                   <span>Age</span>
@@ -141,11 +143,10 @@
                 <h2>Target calories and macro split</h2>
               </div>
               <div class="results-actions">
-                <button class="btn btn-secondary" id="copy-results">Copy</button>
                 <button class="btn btn-secondary" id="share-results">Share</button>
               </div>
             </div>
-            <div class="summary-grid">
+            <div class="summary-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 1.5rem;">
               <div class="summary-card">
                 <span>BMR</span>
                 <strong id="bmr-value">--</strong>
@@ -159,17 +160,23 @@
                 <strong id="target-calories">--</strong>
                 <span class="badge" id="goal-badge">Maintenance</span>
               </div>
+            </div>
+            <div class="summary-grid" style="grid-template-columns: repeat(4, 1fr);">
               <div class="summary-card">
                 <span>Protein</span>
                 <strong id="protein-grams">-- g</strong>
               </div>
               <div class="summary-card">
-                <span>Carbs</span>
-                <strong id="carbs-grams">-- g</strong>
+                <span>Fiber</span>
+                <strong id="fiber-grams">-- g</strong>
               </div>
               <div class="summary-card">
-                <span>Fat</span>
-                <strong id="fat-grams">-- g</strong>
+                <span>Fats</span>
+                <strong id="healthy-fats-grams">-- g</strong>
+              </div>
+              <div class="summary-card">
+                <span>Carbs</span>
+                <strong id="complex-carbs-grams">-- g</strong>
               </div>
             </div>
             <div class="macro-visuals">
@@ -177,8 +184,9 @@
                 <div class="donut-chart" aria-hidden="true">
                   <svg viewBox="0 0 120 120" class="donut-svg">
                     <circle class="donut-ring" cx="60" cy="60" r="46" />
-                    <circle class="donut-fat" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
-                    <circle class="donut-carb" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
+                    <circle class="donut-complex-carbs" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
+                    <circle class="donut-healthy-fats" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
+                    <circle class="donut-fiber" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
                     <circle class="donut-protein" cx="60" cy="60" r="46" stroke-dasharray="0 289" />
                   </svg>
                   <div class="donut-center">
@@ -188,8 +196,9 @@
                 </div>
                 <div class="donut-legend">
                   <span class="legend-item"><em class="legend-dot protein"></em>Protein</span>
-                  <span class="legend-item"><em class="legend-dot carbs"></em>Carbs</span>
-                  <span class="legend-item"><em class="legend-dot fat"></em>Fat</span>
+                  <span class="legend-item"><em class="legend-dot fiber"></em>Fiber</span>
+                  <span class="legend-item"><em class="legend-dot healthy-fats"></em>Healthy Fats</span>
+                  <span class="legend-item"><em class="legend-dot complex-carbs"></em>Complex Carbs</span>
                 </div>
               </div>
               <div class="macro-bars">
@@ -198,12 +207,16 @@
                   <div class="progress-track"><div class="progress-fill protein-fill" style="width: 0%"></div></div>
                 </div>
                 <div class="progress-group">
-                  <div class="progress-label"><span>Carbs</span><strong id="carbs-percent">0%</strong></div>
-                  <div class="progress-track"><div class="progress-fill carbs-fill" style="width: 0%"></div></div>
+                  <div class="progress-label"><span>Fiber</span><strong id="fiber-percent">0g</strong></div>
+                  <div class="progress-track"><div class="progress-fill fiber-fill" style="width: 0%"></div></div>
                 </div>
                 <div class="progress-group">
-                  <div class="progress-label"><span>Fat</span><strong id="fat-percent">0%</strong></div>
-                  <div class="progress-track"><div class="progress-fill fat-fill" style="width: 0%"></div></div>
+                  <div class="progress-label"><span>Healthy Fats</span><strong id="healthy-fats-percent">0%</strong></div>
+                  <div class="progress-track"><div class="progress-fill healthy-fats-fill" style="width: 0%"></div></div>
+                </div>
+                <div class="progress-group">
+                  <div class="progress-label"><span>Complex Carbs</span><strong id="complex-carbs-percent">0%</strong></div>
+                  <div class="progress-track"><div class="progress-fill complex-carbs-fill" style="width: 0%"></div></div>
                 </div>
               </div>
             </div>
@@ -219,42 +232,6 @@
                   <p class="meal-rec-title">Macro Bloom <span id="meal-rec-plan-name">Lean Plan</span></p>
                   <p class="meal-rec-description" id="meal-rec-description">550 calories · 45g protein · 45g carbs · 18g fat</p>
                 </div>
-              </div>
-              <div class="meal-contribution">
-                <h4>Meal Contribution to Your Daily Targets</h4>
-                <div class="contribution-grid">
-                  <div class="contribution-item">
-                    <span class="contribution-label">Calories</span>
-                    <div class="contribution-bar">
-                      <div class="contribution-fill" id="meal-calories-fill"></div>
-                    </div>
-                    <span class="contribution-text"><strong id="meal-calories-value">--</strong> / <span id="meal-calories-target">--</span> cal (<span id="meal-calories-percent">--%</span>)</span>
-                  </div>
-                  <div class="contribution-item">
-                    <span class="contribution-label">Protein</span>
-                    <div class="contribution-bar">
-                      <div class="contribution-fill protein-fill" id="meal-protein-fill"></div>
-                    </div>
-                    <span class="contribution-text"><strong id="meal-protein-value">--</strong> / <span id="meal-protein-target">--</span> g (<span id="meal-protein-percent">--%</span>)</span>
-                  </div>
-                  <div class="contribution-item">
-                    <span class="contribution-label">Carbs</span>
-                    <div class="contribution-bar">
-                      <div class="contribution-fill carbs-fill" id="meal-carbs-fill"></div>
-                    </div>
-                    <span class="contribution-text"><strong id="meal-carbs-value">--</strong> / <span id="meal-carbs-target">--</span> g (<span id="meal-carbs-percent">--%</span>)</span>
-                  </div>
-                  <div class="contribution-item">
-                    <span class="contribution-label">Fat</span>
-                    <div class="contribution-bar">
-                      <div class="contribution-fill fat-fill" id="meal-fat-fill"></div>
-                    </div>
-                    <span class="contribution-text"><strong id="meal-fat-value">--</strong> / <span id="meal-fat-target">--</span> g (<span id="meal-fat-percent">--%</span>)</span>
-                  </div>
-                </div>
-                <p class="meal-rec-cta">
-                  <a href="index.html#contact" class="btn btn-primary">Order Your Meal Plan</a>
-                </p>
               </div>
             </div>
           </article>

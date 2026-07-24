@@ -90,18 +90,19 @@ function formatNumber(value) {
 }
 
 const mealPlans = {
-  lean: { name: 'Lean Plan', calories: 550, protein: 45, carbs: 45, fat: 18 },
-  balance: { name: 'Balance Plan', calories: 750, protein: 65, carbs: 65, fat: 20 },
-  bulk: { name: 'Bulk Plan', calories: 950, protein: 75, carbs: 100, fat: 20 },
+  lean: { name: 'Lean Plan', calories: 550, protein: 45, complexCarbs: 45, healthyFats: 18, fiber: 10 },
+  balance: { name: 'Balance Plan', calories: 750, protein: 65, complexCarbs: 65, healthyFats: 20, fiber: 12 },
+  bulk: { name: 'Bulk Plan', calories: 950, protein: 75, complexCarbs: 100, healthyFats: 20, fiber: 15 },
 };
 
-function updateMacros(currentGoal) {
-  const macros = {
-    lose: { protein: 0.4, carbs: 0.3, fat: 0.3 },
-    maintain: { protein: 0.3, carbs: 0.4, fat: 0.3 },
-    gain: { protein: 0.3, carbs: 0.5, fat: 0.2 },
+// New calculation: Protein multipliers based on goal
+function getProteinMultiplier(goal) {
+  const multipliers = {
+    lose: 2.0,      // Weight Loss: 2.0g per kg body weight
+    maintain: 1.6,  // Maintenance: 1.6g per kg body weight
+    gain: 2.2,      // Weight Gain: 2.2g per kg body weight
   };
-  return macros[currentGoal] || macros.maintain;
+  return multipliers[goal] || multipliers.maintain;
 }
 
 function parseValue(text) {
@@ -223,7 +224,7 @@ function updateMealCoverage() {
   );
 }
 
-function updateMealRecommendation(goal, calories, proteinGrams, carbsGrams, fatGrams) {
+function updateMealRecommendation(goal, calories, proteinGrams, fiberGrams, healthyFatsGrams, complexCarbsGrams) {
   // Determine recommended meal plan based on goal
   const recommendedPlanKey = goal === 'lose' ? 'lean' : goal === 'gain' ? 'bulk' : 'balance';
   const recommendedPlan = mealPlans[recommendedPlanKey];
@@ -242,63 +243,48 @@ function updateMealRecommendation(goal, calories, proteinGrams, carbsGrams, fatG
   setCoverageLabelText('meal-rec-badge', recommendedPlan.name);
   setCoverageLabelText('meal-rec-plan-name', recommendedPlan.name);
   
-  // Update meal description
-  const mealDesc = `${recommendedPlan.calories} calories · ${recommendedPlan.protein}g protein · ${recommendedPlan.carbs}g carbs · ${recommendedPlan.fat}g fat`;
+  // Update meal description with new macros
+  const mealDesc = `${recommendedPlan.calories} calories · ${recommendedPlan.protein}g protein · ${recommendedPlan.fiber}g fiber · ${recommendedPlan.healthyFats}g healthy fats · ${recommendedPlan.complexCarbs}g complex carbs`;
   setCoverageLabelText('meal-rec-description', mealDesc);
-  
-  // Calculate contribution percentages
-  const caloriesPercent = calories ? Math.min(100, Math.round((recommendedPlan.calories / calories) * 100)) : 0;
-  const proteinPercent = proteinGrams ? Math.min(100, Math.round((recommendedPlan.protein / proteinGrams) * 100)) : 0;
-  const carbsPercent = carbsGrams ? Math.min(100, Math.round((recommendedPlan.carbs / carbsGrams) * 100)) : 0;
-  const fatPercent = fatGrams ? Math.min(100, Math.round((recommendedPlan.fat / fatGrams) * 100)) : 0;
-  
-  // Update contribution values
-  setCoverageLabelText('meal-calories-value', formatNumber(recommendedPlan.calories));
-  setCoverageLabelText('meal-calories-target', formatNumber(calories));
-  setCoverageLabelText('meal-calories-percent', `${caloriesPercent}%`);
-  
-  setCoverageLabelText('meal-protein-value', recommendedPlan.protein);
-  setCoverageLabelText('meal-protein-target', proteinGrams);
-  setCoverageLabelText('meal-protein-percent', `${proteinPercent}%`);
-  
-  setCoverageLabelText('meal-carbs-value', recommendedPlan.carbs);
-  setCoverageLabelText('meal-carbs-target', carbsGrams);
-  setCoverageLabelText('meal-carbs-percent', `${carbsPercent}%`);
-  
-  setCoverageLabelText('meal-fat-value', recommendedPlan.fat);
-  setCoverageLabelText('meal-fat-target', fatGrams);
-  setCoverageLabelText('meal-fat-percent', `${fatPercent}%`);
-  
-  // Update contribution bars
-  const mealCaloriesFill = document.getElementById('meal-calories-fill');
-  const mealProteinFill = document.getElementById('meal-protein-fill');
-  const mealCarbsFill = document.getElementById('meal-carbs-fill');
-  const mealFatFill = document.getElementById('meal-fat-fill');
-  
-  if (mealCaloriesFill) mealCaloriesFill.style.width = `${caloriesPercent}%`;
-  if (mealProteinFill) mealProteinFill.style.width = `${proteinPercent}%`;
-  if (mealCarbsFill) mealCarbsFill.style.width = `${carbsPercent}%`;
-  if (mealFatFill) mealFatFill.style.width = `${fatPercent}%`;
 }
 
-function updateDonut(percentProtein, percentCarbs, percentFat) {
+function updateDonut(percentProtein, percentFiber, percentHealthyFats, percentComplexCarbs) {
   const circumference = 2 * Math.PI * 46;
   const proteinStroke = (percentProtein / 100) * circumference;
-  const carbsStroke = (percentCarbs / 100) * circumference;
-  const fatStroke = (percentFat / 100) * circumference;
+  const fiberStroke = (percentFiber / 100) * circumference;
+  const healthyFatsStroke = (percentHealthyFats / 100) * circumference;
+  const complexCarbsStroke = (percentComplexCarbs / 100) * circumference;
 
   const proteinCircle = document.querySelector('.donut-protein');
-  const carbsCircle = document.querySelector('.donut-carb');
-  const fatCircle = document.querySelector('.donut-fat');
+  const fiberCircle = document.querySelector('.donut-fiber');
+  const healthyFatsCircle = document.querySelector('.donut-healthy-fats');
+  const complexCarbsCircle = document.querySelector('.donut-complex-carbs');
+
+  // Calculate rotation angles (SVG starts at -90° for top position)
+  const proteinAngle = -90;
+  const fiberAngle = -90 + (percentProtein / 100) * 360;
+  const healthyFatsAngle = -90 + ((percentProtein + percentFiber) / 100) * 360;
+  const complexCarbsAngle = -90 + ((percentProtein + percentFiber + percentHealthyFats) / 100) * 360;
 
   if (proteinCircle) {
     proteinCircle.style.strokeDasharray = `${proteinStroke} ${circumference - proteinStroke}`;
+    proteinCircle.style.transform = `rotate(${proteinAngle}deg)`;
+    proteinCircle.style.transformOrigin = 'center';
   }
-  if (carbsCircle) {
-    carbsCircle.style.strokeDasharray = `${carbsStroke} ${circumference - carbsStroke}`;
+  if (fiberCircle) {
+    fiberCircle.style.strokeDasharray = `${fiberStroke} ${circumference - fiberStroke}`;
+    fiberCircle.style.transform = `rotate(${fiberAngle}deg)`;
+    fiberCircle.style.transformOrigin = 'center';
   }
-  if (fatCircle) {
-    fatCircle.style.strokeDasharray = `${fatStroke} ${circumference - fatStroke}`;
+  if (healthyFatsCircle) {
+    healthyFatsCircle.style.strokeDasharray = `${healthyFatsStroke} ${circumference - healthyFatsStroke}`;
+    healthyFatsCircle.style.transform = `rotate(${healthyFatsAngle}deg)`;
+    healthyFatsCircle.style.transformOrigin = 'center';
+  }
+  if (complexCarbsCircle) {
+    complexCarbsCircle.style.strokeDasharray = `${complexCarbsStroke} ${circumference - complexCarbsStroke}`;
+    complexCarbsCircle.style.transform = `rotate(${complexCarbsAngle}deg)`;
+    complexCarbsCircle.style.transformOrigin = 'center';
   }
 }
 
@@ -365,48 +351,69 @@ function calculateCalories() {
     };
 
     const calories = Math.round(tdee + (goalOffsets[goal][rate] || 0));
-    const macroRatios = updateMacros(goal);
 
-    const proteinCalories = Math.round(calories * macroRatios.protein);
-    const carbsCalories = Math.round(calories * macroRatios.carbs);
-    const fatCalories = Math.round(calories * macroRatios.fat);
+    // NEW MACRO CALCULATIONS
+    
+    // 1. PROTEIN: Based on body weight (g/kg)
+    const proteinMultiplier = getProteinMultiplier(goal);
+    const proteinGrams = Math.round(weightKg * proteinMultiplier);
+    const proteinCalories = proteinGrams * 4;
 
-    const proteinGrams = Math.round(proteinCalories / 4);
-    const carbsGrams = Math.round(carbsCalories / 4);
-    const fatGrams = Math.round(fatCalories / 9);
+    // 2. HEALTHY FATS: 28% of daily calories
+    const healthyFatCalories = Math.round(calories * 0.28);
+    const healthyFatsGrams = Math.round(healthyFatCalories / 9);
+
+    // 3. FIBER: 14g per 1000 calories, with gender-based minimum
+    const calculatedFiber = Math.round((calories / 1000) * 14);
+    const minimumFiber = gender === 'male' ? 30 : 25;
+    const fiberGrams = Math.max(calculatedFiber, minimumFiber);
+
+    // 4. COMPLEX CARBS: Remaining calories after Protein and Healthy Fats
+    const remainingCalories = calories - proteinCalories - healthyFatCalories;
+    const complexCarbsGrams = Math.round(remainingCalories / 4);
 
     const bmrValue = document.getElementById('bmr-value');
     const tdeeValue = document.getElementById('tdee-value');
     const targetCalories = document.getElementById('target-calories');
     const proteinGramsEl = document.getElementById('protein-grams');
-    const carbsGramsEl = document.getElementById('carbs-grams');
-    const fatGramsEl = document.getElementById('fat-grams');
+    const fiberGramsEl = document.getElementById('fiber-grams');
+    const healthyFatsGramsEl = document.getElementById('healthy-fats-grams');
+    const complexCarbsGramsEl = document.getElementById('complex-carbs-grams');
     const donutCalories = document.getElementById('donut-calories');
 
     if (bmrValue) bmrValue.textContent = formatNumber(bmr);
     if (tdeeValue) tdeeValue.textContent = formatNumber(tdee);
     if (targetCalories) targetCalories.textContent = formatNumber(calories);
     if (proteinGramsEl) proteinGramsEl.textContent = `${formatNumber(proteinGrams)} g`;
-    if (carbsGramsEl) carbsGramsEl.textContent = `${formatNumber(carbsGrams)} g`;
-    if (fatGramsEl) fatGramsEl.textContent = `${formatNumber(fatGrams)} g`;
+    if (fiberGramsEl) fiberGramsEl.textContent = `${formatNumber(fiberGrams)} g`;
+    if (healthyFatsGramsEl) healthyFatsGramsEl.textContent = `${formatNumber(healthyFatsGrams)} g`;
+    if (complexCarbsGramsEl) complexCarbsGramsEl.textContent = `${formatNumber(complexCarbsGrams)} g`;
     if (donutCalories) donutCalories.textContent = formatNumber(calories);
 
-    const proteinPercent = Math.round(macroRatios.protein * 100);
-    const carbsPercent = Math.round(macroRatios.carbs * 100);
-    const fatPercent = Math.round(macroRatios.fat * 100);
+    // Calculate percentages for visualization (based on calories)
+    const proteinPercent = Math.round((proteinCalories / calories) * 100);
+    const healthyFatsPercent = Math.round((healthyFatCalories / calories) * 100);
+    const complexCarbsCalories = complexCarbsGrams * 4;
+    const complexCarbsPercent = Math.round((complexCarbsCalories / calories) * 100);
+    // Fiber contributes approximately 2 calories per gram for visualization
+    const fiberCalories = fiberGrams * 2;
+    const fiberPercent = Math.round((fiberCalories / calories) * 100);
     
     const proteinPercentEl = document.getElementById('protein-percent');
-    const carbsPercentEl = document.getElementById('carbs-percent');
-    const fatPercentEl = document.getElementById('fat-percent');
+    const fiberPercentEl = document.getElementById('fiber-percent');
+    const healthyFatsPercentEl = document.getElementById('healthy-fats-percent');
+    const complexCarbsPercentEl = document.getElementById('complex-carbs-percent');
     
     if (proteinPercentEl) proteinPercentEl.textContent = `${proteinPercent}%`;
-    if (carbsPercentEl) carbsPercentEl.textContent = `${carbsPercent}%`;
-    if (fatPercentEl) fatPercentEl.textContent = `${fatPercent}%`;
+    if (fiberPercentEl) fiberPercentEl.textContent = `${fiberPercent}%`;
+    if (healthyFatsPercentEl) healthyFatsPercentEl.textContent = `${healthyFatsPercent}%`;
+    if (complexCarbsPercentEl) complexCarbsPercentEl.textContent = `${complexCarbsPercent}%`;
 
     updateProgressBar('.protein-fill', proteinPercent);
-    updateProgressBar('.carbs-fill', carbsPercent);
-    updateProgressBar('.fat-fill', fatPercent);
-    updateDonut(proteinPercent, carbsPercent, fatPercent);
+    updateProgressBar('.fiber-fill', fiberPercent);
+    updateProgressBar('.healthy-fats-fill', healthyFatsPercent);
+    updateProgressBar('.complex-carbs-fill', complexCarbsPercent);
+    updateDonut(proteinPercent, fiberPercent, healthyFatsPercent, complexCarbsPercent);
 
     const goalBadge = document.getElementById('goal-badge');
     if (goalBadge) {
@@ -414,7 +421,7 @@ function calculateCalories() {
     }
 
     // Update meal recommendation
-    updateMealRecommendation(goal, calories, proteinGrams, carbsGrams, fatGrams);
+    updateMealRecommendation(goal, calories, proteinGrams, fiberGrams, healthyFatsGrams, complexCarbsGrams);
 
     // Only update meal coverage if the meal plan elements exist
     if (document.querySelector('input[name="meal-plan"]')) {
@@ -427,8 +434,9 @@ function calculateCalories() {
       tdee,
       calories,
       proteinGrams,
-      carbsGrams,
-      fatGrams,
+      fiberGrams,
+      healthyFatsGrams,
+      complexCarbsGrams,
       goal,
       rate,
       activity,
@@ -524,8 +532,9 @@ function shareResults() {
   const bmr = document.getElementById('bmr-value').textContent;
   const tdee = document.getElementById('tdee-value').textContent;
   const protein = document.getElementById('protein-grams').textContent;
-  const carbs = document.getElementById('carbs-grams').textContent;
-  const fat = document.getElementById('fat-grams').textContent;
+  const fiber = document.getElementById('fiber-grams').textContent;
+  const healthyFats = document.getElementById('healthy-fats-grams').textContent;
+  const complexCarbs = document.getElementById('complex-carbs-grams').textContent;
   const goal = document.getElementById('goal-badge').textContent;
   
   // Check if meal recommendation is shown
@@ -540,18 +549,26 @@ function shareResults() {
     mealInfo = `\n\n🍽️ *Recommended Meal Plan*\nMacro Bloom ${planName}\n${mealDesc}\n\nMeal Coverage:\n• Calories: ${mealCalPercent}\n• Protein: ${mealProtPercent}`;
   }
   
-  const shareText = `🎯 *My Macro Bloom Calculator Results*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Carbs: ${carbs}\n• Fat: ${fat}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
+  const shareText = `🎯 *My Macro Bloom Calculator Results*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Fiber: ${fiber}\n• Healthy Fats: ${healthyFats}\n• Complex Carbs: ${complexCarbs}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
 
-  // Try Web Share API first (mobile devices)
-  if (navigator.share) {
+  // Check if it's a mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // For mobile devices, try Web Share API
+  if (isMobile && navigator.share) {
     navigator.share({
       title: 'My Macro Bloom Calculator Results',
       text: shareText,
-    }).catch(err => console.log('Share cancelled'));
+    }).catch(err => {
+      // If share is cancelled or fails, open WhatsApp directly
+      const whatsappText = encodeURIComponent(shareText);
+      const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+      window.open(whatsappUrl, '_blank');
+    });
   } else {
-    // Fallback: Open WhatsApp with pre-filled message
+    // For desktop (including MacBook), directly open WhatsApp Web
     const whatsappText = encodeURIComponent(shareText);
-    const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+    const whatsappUrl = `https://web.whatsapp.com/send?text=${whatsappText}`;
     window.open(whatsappUrl, '_blank');
   }
 }
