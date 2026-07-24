@@ -523,8 +523,43 @@ function hydrateSavedResults() {
 }
 
 function copyResults() {
-  const text = `Macro Bloom Calculator Results:\nBMR: ${document.getElementById('bmr-value').textContent}\nTDEE: ${document.getElementById('tdee-value').textContent}\nCalories: ${document.getElementById('target-calories').textContent}\nProtein: ${document.getElementById('protein-grams').textContent}\nCarbs: ${document.getElementById('carbs-grams').textContent}\nFat: ${document.getElementById('fat-grams').textContent}`;
-  navigator.clipboard.writeText(text);
+  const calories = document.getElementById('target-calories').textContent;
+  const bmr = document.getElementById('bmr-value').textContent;
+  const tdee = document.getElementById('tdee-value').textContent;
+  const protein = document.getElementById('protein-grams').textContent;
+  const fiber = document.getElementById('fiber-grams').textContent;
+  const healthyFats = document.getElementById('healthy-fats-grams').textContent;
+  const complexCarbs = document.getElementById('complex-carbs-grams').textContent;
+  const goal = document.getElementById('goal-badge').textContent;
+  
+  // Check if meal recommendation is shown
+  const mealRecSection = document.getElementById('meal-recommendation');
+  let mealInfo = '';
+  if (mealRecSection && mealRecSection.style.display !== 'none') {
+    const planName = document.getElementById('meal-rec-plan-name');
+    const mealDesc = document.getElementById('meal-rec-description');
+    
+    if (planName && mealDesc) {
+      mealInfo = `\n\n🍽️ Recommended Meal Plan\nMacro Bloom ${planName.textContent}\n${mealDesc.textContent}`;
+    }
+  }
+  
+  const copyText = `🎯 Your daily Calorie and Macro Targets\n\n💪 Goal: ${goal}\n\n📊 Daily Targets\n• Calories: ${calories}\n• Protein: ${protein}\n• Fiber: ${fiber}\n• Fats: ${healthyFats}\n• Carbs: ${complexCarbs}\n\n📈 Metabolic Rates\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
+  
+  navigator.clipboard.writeText(copyText).then(() => {
+    const copyBtn = document.getElementById('copy-results');
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.style.backgroundColor = '#22C55E';
+    
+    setTimeout(() => {
+      copyBtn.textContent = originalText;
+      copyBtn.style.backgroundColor = '';
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+    alert('Failed to copy to clipboard. Please try again.');
+  });
 }
 
 function shareResults() {
@@ -549,28 +584,12 @@ function shareResults() {
     }
   }
   
-  const shareText = `🎯 *My Macro Bloom Calculator Results*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Fiber: ${fiber}\n• Fats: ${healthyFats}\n• Carbs: ${complexCarbs}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
+  const shareText = `🎯 *Your daily Calorie and Macro Targets*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Fiber: ${fiber}\n• Fats: ${healthyFats}\n• Carbs: ${complexCarbs}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
 
-  // Check if it's a mobile device
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  // For mobile devices, try Web Share API
-  if (isMobile && navigator.share) {
-    navigator.share({
-      title: 'My Macro Bloom Calculator Results',
-      text: shareText,
-    }).catch(err => {
-      // If share is cancelled or fails, open WhatsApp directly
-      const whatsappText = encodeURIComponent(shareText);
-      const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
-      window.open(whatsappUrl, '_blank');
-    });
-  } else {
-    // For desktop (including MacBook), directly open WhatsApp Web
-    const whatsappText = encodeURIComponent(shareText);
-    const whatsappUrl = `https://web.whatsapp.com/send?text=${whatsappText}`;
-    window.open(whatsappUrl, '_blank');
-  }
+  // Send to the same WhatsApp business number as the "Order on WhatsApp" button
+  const whatsappText = encodeURIComponent(shareText);
+  const whatsappUrl = `https://wa.me/message/MV3XW4QBQKWEA1?text=${whatsappText}`;
+  window.open(whatsappUrl, '_blank');
 }
 
 function shareCoverageReport() {
