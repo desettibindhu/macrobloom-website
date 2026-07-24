@@ -541,15 +541,15 @@ function shareResults() {
   const mealRecSection = document.getElementById('meal-recommendation');
   let mealInfo = '';
   if (mealRecSection && mealRecSection.style.display !== 'none') {
-    const planName = document.getElementById('meal-rec-plan-name').textContent;
-    const mealDesc = document.getElementById('meal-rec-description').textContent;
-    const mealCalPercent = document.getElementById('meal-calories-percent').textContent;
-    const mealProtPercent = document.getElementById('meal-protein-percent').textContent;
+    const planName = document.getElementById('meal-rec-plan-name');
+    const mealDesc = document.getElementById('meal-rec-description');
     
-    mealInfo = `\n\n🍽️ *Recommended Meal Plan*\nMacro Bloom ${planName}\n${mealDesc}\n\nMeal Coverage:\n• Calories: ${mealCalPercent}\n• Protein: ${mealProtPercent}`;
+    if (planName && mealDesc) {
+      mealInfo = `\n\n🍽️ *Recommended Meal Plan*\nMacro Bloom ${planName.textContent}\n${mealDesc.textContent}`;
+    }
   }
   
-  const shareText = `🎯 *My Macro Bloom Calculator Results*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Fiber: ${fiber}\n• Healthy Fats: ${healthyFats}\n• Complex Carbs: ${complexCarbs}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
+  const shareText = `🎯 *My Macro Bloom Calculator Results*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Fiber: ${fiber}\n• Fats: ${healthyFats}\n• Carbs: ${complexCarbs}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
 
   // Check if it's a mobile device
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
