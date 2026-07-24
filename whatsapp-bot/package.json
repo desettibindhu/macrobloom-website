@@ -1,0 +1,37 @@
+{
+  "name": "macrobloom-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Cloud API integration for MacroBloom nutrition calculator",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "vercel-dev": "vercel dev",
+    "deploy:vercel": "vercel --prod"
+  },
+  "keywords": [
+    "whatsapp",
+    "cloud-api",
+    "macrobloom",
+    "nutrition",
+    "chatbot"
+  ],
+  "author": "MacroBloom",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.2",
+    "google-spreadsheet": "^4.1.1",
+    "node-cache": "^5.1.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

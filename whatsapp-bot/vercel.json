@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/whatsapp/webhook",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/api/whatsapp/(.*)",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/index.js"
+    }
+  ],
+  "env": {
+    "WHATSAPP_ACCESS_TOKEN": "@whatsapp_access_token",
+    "WHATSAPP_PHONE_NUMBER_ID": "@whatsapp_phone_number_id",
+    "WHATSAPP_VERIFY_TOKEN": "@whatsapp_verify_token",
+    "META_APP_ID": "@meta_app_id",
+    "META_APP_SECRET": "@meta_app_secret",
+    "GOOGLE_SHEETS_ENABLED": "@google_sheets_enabled",
+    "GOOGLE_SHEETS_ID": "@google_sheets_id",
+    "GOOGLE_SERVICE_ACCOUNT_EMAIL": "@google_service_account_email",
+    "GOOGLE_PRIVATE_KEY": "@google_private_key"
+  }
+}
