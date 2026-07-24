@@ -223,6 +223,64 @@ function updateMealCoverage() {
   );
 }
 
+function updateMealRecommendation(goal, calories, proteinGrams, carbsGrams, fatGrams) {
+  // Determine recommended meal plan based on goal
+  const recommendedPlanKey = goal === 'lose' ? 'lean' : goal === 'gain' ? 'bulk' : 'balance';
+  const recommendedPlan = mealPlans[recommendedPlanKey];
+  
+  // Show the meal recommendation section
+  const mealRecSection = document.getElementById('meal-recommendation');
+  if (mealRecSection) {
+    mealRecSection.style.display = 'block';
+  }
+  
+  // Update goal text
+  const goalText = goal === 'lose' ? 'fat loss goal' : goal === 'gain' ? 'muscle gain goal' : 'maintenance goal';
+  setCoverageLabelText('meal-rec-goal', goalText);
+  
+  // Update plan name and badge
+  setCoverageLabelText('meal-rec-badge', recommendedPlan.name);
+  setCoverageLabelText('meal-rec-plan-name', recommendedPlan.name);
+  
+  // Update meal description
+  const mealDesc = `${recommendedPlan.calories} calories · ${recommendedPlan.protein}g protein · ${recommendedPlan.carbs}g carbs · ${recommendedPlan.fat}g fat`;
+  setCoverageLabelText('meal-rec-description', mealDesc);
+  
+  // Calculate contribution percentages
+  const caloriesPercent = calories ? Math.min(100, Math.round((recommendedPlan.calories / calories) * 100)) : 0;
+  const proteinPercent = proteinGrams ? Math.min(100, Math.round((recommendedPlan.protein / proteinGrams) * 100)) : 0;
+  const carbsPercent = carbsGrams ? Math.min(100, Math.round((recommendedPlan.carbs / carbsGrams) * 100)) : 0;
+  const fatPercent = fatGrams ? Math.min(100, Math.round((recommendedPlan.fat / fatGrams) * 100)) : 0;
+  
+  // Update contribution values
+  setCoverageLabelText('meal-calories-value', formatNumber(recommendedPlan.calories));
+  setCoverageLabelText('meal-calories-target', formatNumber(calories));
+  setCoverageLabelText('meal-calories-percent', `${caloriesPercent}%`);
+  
+  setCoverageLabelText('meal-protein-value', recommendedPlan.protein);
+  setCoverageLabelText('meal-protein-target', proteinGrams);
+  setCoverageLabelText('meal-protein-percent', `${proteinPercent}%`);
+  
+  setCoverageLabelText('meal-carbs-value', recommendedPlan.carbs);
+  setCoverageLabelText('meal-carbs-target', carbsGrams);
+  setCoverageLabelText('meal-carbs-percent', `${carbsPercent}%`);
+  
+  setCoverageLabelText('meal-fat-value', recommendedPlan.fat);
+  setCoverageLabelText('meal-fat-target', fatGrams);
+  setCoverageLabelText('meal-fat-percent', `${fatPercent}%`);
+  
+  // Update contribution bars
+  const mealCaloriesFill = document.getElementById('meal-calories-fill');
+  const mealProteinFill = document.getElementById('meal-protein-fill');
+  const mealCarbsFill = document.getElementById('meal-carbs-fill');
+  const mealFatFill = document.getElementById('meal-fat-fill');
+  
+  if (mealCaloriesFill) mealCaloriesFill.style.width = `${caloriesPercent}%`;
+  if (mealProteinFill) mealProteinFill.style.width = `${proteinPercent}%`;
+  if (mealCarbsFill) mealCarbsFill.style.width = `${carbsPercent}%`;
+  if (mealFatFill) mealFatFill.style.width = `${fatPercent}%`;
+}
+
 function updateDonut(percentProtein, percentCarbs, percentFat) {
   const circumference = 2 * Math.PI * 46;
   const proteinStroke = (percentProtein / 100) * circumference;
@@ -355,6 +413,9 @@ function calculateCalories() {
       goalBadge.textContent = goal === 'lose' ? 'Fat Loss' : goal === 'gain' ? 'Muscle Gain' : 'Maintenance';
     }
 
+    // Update meal recommendation
+    updateMealRecommendation(goal, calories, proteinGrams, carbsGrams, fatGrams);
+
     // Only update meal coverage if the meal plan elements exist
     if (document.querySelector('input[name="meal-plan"]')) {
       setDefaultMealPlan(goal);
@@ -459,11 +520,39 @@ function copyResults() {
 }
 
 function shareResults() {
+  const calories = document.getElementById('target-calories').textContent;
+  const bmr = document.getElementById('bmr-value').textContent;
+  const tdee = document.getElementById('tdee-value').textContent;
+  const protein = document.getElementById('protein-grams').textContent;
+  const carbs = document.getElementById('carbs-grams').textContent;
+  const fat = document.getElementById('fat-grams').textContent;
+  const goal = document.getElementById('goal-badge').textContent;
+  
+  // Check if meal recommendation is shown
+  const mealRecSection = document.getElementById('meal-recommendation');
+  let mealInfo = '';
+  if (mealRecSection && mealRecSection.style.display !== 'none') {
+    const planName = document.getElementById('meal-rec-plan-name').textContent;
+    const mealDesc = document.getElementById('meal-rec-description').textContent;
+    const mealCalPercent = document.getElementById('meal-calories-percent').textContent;
+    const mealProtPercent = document.getElementById('meal-protein-percent').textContent;
+    
+    mealInfo = `\n\n🍽️ *Recommended Meal Plan*\nMacro Bloom ${planName}\n${mealDesc}\n\nMeal Coverage:\n• Calories: ${mealCalPercent}\n• Protein: ${mealProtPercent}`;
+  }
+  
+  const shareText = `🎯 *My Macro Bloom Calculator Results*\n\n💪 Goal: ${goal}\n\n📊 *Daily Targets*\n• Calories: ${calories}\n• Protein: ${protein}\n• Carbs: ${carbs}\n• Fat: ${fat}\n\n📈 *Metabolic Rates*\n• BMR: ${bmr}\n• TDEE: ${tdee}${mealInfo}\n\nCalculated with Macro Bloom Calculator\n🌐 Visit: macrobloom.com`;
+
+  // Try Web Share API first (mobile devices)
   if (navigator.share) {
     navigator.share({
-      title: 'Macro Bloom Calculator Results',
-      text: `My calorie target is ${document.getElementById('target-calories').textContent} with a ${document.getElementById('goal-badge').textContent} goal.`,
-    });
+      title: 'My Macro Bloom Calculator Results',
+      text: shareText,
+    }).catch(err => console.log('Share cancelled'));
+  } else {
+    // Fallback: Open WhatsApp with pre-filled message
+    const whatsappText = encodeURIComponent(shareText);
+    const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+    window.open(whatsappUrl, '_blank');
   }
 }
 

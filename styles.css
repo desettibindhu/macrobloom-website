@@ -47,6 +47,11 @@ svg {
   padding: 5rem 0;
 }
 
+#calculator {
+  padding-top: 3rem;
+  padding-bottom: 4rem;
+}
+
 .section-alt {
   background: rgba(255, 255, 255, 0.65);
 }
@@ -858,8 +863,9 @@ svg {
 
 /* Calculator page styles */
 .calculator-hero {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-top: 3rem;
+  padding-bottom: 2.5rem;
+  background: linear-gradient(180deg, rgba(240, 253, 244, 0.6) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 .calculator-hero-grid {
@@ -867,6 +873,24 @@ svg {
   gap: 2rem;
   align-items: start;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+
+.hero-copy-centered {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hero-copy-centered h1 {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin-bottom: 1rem;
+}
+
+.hero-copy-centered .hero-text {
+  font-size: 1.1rem;
+  color: var(--text);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .hero-card {
@@ -925,17 +949,23 @@ svg {
 
 .calculator-grid {
   display: grid;
-  gap: 1.75rem;
-  grid-template-columns: 1.05fr 0.95fr;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
   align-items: start;
 }
 
 .card {
   background: white;
   border: 1px solid rgba(34, 197, 94, 0.12);
-  border-radius: 2rem;
-  box-shadow: 0 34px 80px rgba(15, 23, 42, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.06);
   padding: 2rem;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
 }
 
 .calculator-unit-toggle {
@@ -994,9 +1024,10 @@ legend {
 .radio-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   font-weight: 500;
   color: var(--text);
+  justify-self: start;
 }
 
 label span,
@@ -1051,6 +1082,29 @@ button:focus {
 .results-panel {
   display: grid;
   gap: 1.5rem;
+  position: sticky;
+  top: 5.5rem;
+  align-self: start;
+  max-height: calc(100vh - 6.5rem);
+  overflow-y: auto;
+}
+
+.results-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.results-panel::-webkit-scrollbar-track {
+  background: rgba(34, 197, 94, 0.05);
+  border-radius: 3px;
+}
+
+.results-panel::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.2);
+  border-radius: 3px;
+}
+
+.results-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.3);
 }
 
 .results-header {
@@ -1256,6 +1310,138 @@ button:focus {
 
 .fat-fill {
   background: #ef4444;
+}
+
+/* Meal Recommendation Section */
+.meal-recommendation {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.meal-rec-header {
+  margin-bottom: 1.25rem;
+}
+
+.meal-rec-header h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.35rem;
+}
+
+.meal-rec-subtitle {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.meal-rec-subtitle span {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.meal-rec-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid rgba(34, 197, 94, 0.2);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.meal-rec-badge {
+  background: var(--green);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.meal-rec-content {
+  flex: 1;
+}
+
+.meal-rec-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.35rem;
+}
+
+.meal-rec-description {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.meal-contribution h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 1rem;
+}
+
+.contribution-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contribution-item {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.contribution-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.contribution-bar {
+  height: 1.25rem;
+  background: #e5f6eb;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.contribution-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green);
+  transition: width 0.4s ease;
+}
+
+.contribution-fill.protein-fill {
+  background: #22c55e;
+}
+
+.contribution-fill.carbs-fill {
+  background: #f59e0b;
+}
+
+.contribution-fill.fat-fill {
+  background: #ef4444;
+}
+
+.contribution-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.contribution-text strong {
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.meal-rec-cta {
+  text-align: center;
+  margin-top: 1.5rem;
 }
 
 .coverage-section {
@@ -1555,6 +1741,16 @@ button:focus {
   .calculator-hero {
     padding-top: 3rem;
     padding-bottom: 3rem;
+  }
+
+  .results-panel {
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
+
+  .calculator-grid {
+    gap: 1.5rem;
   }
 }
 

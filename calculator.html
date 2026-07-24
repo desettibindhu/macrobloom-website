@@ -43,17 +43,13 @@
 
     <main id="calculator-page">
       <section class="section calculator-hero">
-        <div class="container calculator-hero-grid">
-          <div class="hero-copy reveal">
+        <div class="container">
+          <div class="hero-copy-centered reveal">
             <p class="eyebrow">Calorie Calculator</p>
             <h1>Know your daily calorie and macro targets</h1>
             <p class="hero-text">
               Get a personalized calorie goal, BMR, TDEE, and macro breakdown tailored for your fitness ambition.
             </p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="#calculator">Start Calculating</a>
-              <a class="btn btn-secondary" href="#results">View Example Results</a>
-            </div>
           </div>
         </div>
       </section>
@@ -211,81 +207,54 @@
                 </div>
               </div>
             </div>
-          </article>
-        </div>
-      </section>
 
-      <section class="section section-alt coverage-section reveal" id="coverage-section">
-        <div class="container">
-          <article class="coverage-panel card">
-            <div class="section-heading">
-              <p class="eyebrow">Macro Bloom Meal Coverage</p>
-              <h2>How Much Does Your Macro Bloom Meal Cover?</h2>
-              <p>See how a Macro Bloom lunch contributes toward your daily calorie and macro goals.</p>
-            </div>
-            <div class="meal-selector-grid">
-              <fieldset class="meal-selector" aria-label="Select Macro Bloom meal plan">
-                <legend>Choose a Macro Bloom meal</legend>
-                <label class="meal-option">
-                  <input type="radio" name="meal-plan" id="meal-plan-lean" value="lean" checked />
-                  <span>Lean (Fat Loss)</span>
-                </label>
-                <label class="meal-option">
-                  <input type="radio" name="meal-plan" id="meal-plan-balance" value="balance" />
-                  <span>Balance (Maintenance)</span>
-                </label>
-                <label class="meal-option">
-                  <input type="radio" name="meal-plan" id="meal-plan-bulk" value="bulk" />
-                  <span>Bulk (Muscle Gain)</span>
-                </label>
-              </fieldset>
-            </div>
-            <div class="coverage-grid">
-              <div class="coverage-summary-card">
-                <h3>Daily Target</h3>
-                <ul class="coverage-list">
-                  <li><span>Calories</span><strong id="coverage-target-calories">--</strong></li>
-                  <li><span>Protein</span><strong id="coverage-target-protein">-- g</strong></li>
-                  <li><span>Carbs</span><strong id="coverage-target-carbs">-- g</strong></li>
-                  <li><span>Fat</span><strong id="coverage-target-fat">-- g</strong></li>
-                </ul>
+            <div class="meal-recommendation" id="meal-recommendation" style="display: none;">
+              <div class="meal-rec-header">
+                <h3>Recommended for You</h3>
+                <p class="meal-rec-subtitle">Based on your <span id="meal-rec-goal">goal</span></p>
               </div>
-              <div class="coverage-summary-card">
-                <h3>Selected Macro Bloom Meal</h3>
-                <div class="coverage-plan-name" id="coverage-meal-name">Lean Plan</div>
-                <ul class="coverage-list">
-                  <li><span>Calories</span><strong id="coverage-meal-calories">550</strong></li>
-                  <li><span>Protein</span><strong id="coverage-meal-protein">45 g</strong></li>
-                  <li><span>Carbs</span><strong id="coverage-meal-carbs">45 g</strong></li>
-                  <li><span>Fat</span><strong id="coverage-meal-fat">18 g</strong></li>
-                </ul>
-              </div>
-              <div class="coverage-summary-card">
-                <h3>Coverage Results</h3>
-                <ul class="coverage-list">
-                  <li><span>Calories Covered</span><strong id="coverage-calories-percent">--%</strong></li>
-                  <li><span>Protein Covered</span><strong id="coverage-protein-percent">--%</strong></li>
-                  <li><span>Carbs Covered</span><strong id="coverage-carbs-percent">--%</strong></li>
-                  <li><span>Fat Covered</span><strong id="coverage-fat-percent">--%</strong></li>
-                </ul>
-              </div>
-            </div>
-            <div class="coverage-visuals">
-              <div class="coverage-bars">
-                <div class="coverage-summary-row">
-                  <p class="coverage-card-title">Meal coverage summary</p>
-                  <button class="btn btn-secondary" id="share-coverage-report" type="button">Share coverage report</button>
+              <div class="meal-rec-card">
+                <div class="meal-rec-badge" id="meal-rec-badge">Lean Plan</div>
+                <div class="meal-rec-content">
+                  <p class="meal-rec-title">Macro Bloom <span id="meal-rec-plan-name">Lean Plan</span></p>
+                  <p class="meal-rec-description" id="meal-rec-description">550 calories · 45g protein · 45g carbs · 18g fat</p>
                 </div>
-                <p class="coverage-message" id="coverage-summary-text">Select a meal plan to see coverage and remaining nutrition.</p>
-                <div class="remaining-nutrition">
-                  <h3>Remaining Nutrition</h3>
-                  <ul class="remaining-list">
-                    <li><span>Calories</span><strong id="remaining-calories">-- kcal</strong></li>
-                    <li><span>Protein</span><strong id="remaining-protein">-- g</strong></li>
-                    <li><span>Carbs</span><strong id="remaining-carbs">-- g</strong></li>
-                    <li><span>Fat</span><strong id="remaining-fat">-- g</strong></li>
-                  </ul>
+              </div>
+              <div class="meal-contribution">
+                <h4>Meal Contribution to Your Daily Targets</h4>
+                <div class="contribution-grid">
+                  <div class="contribution-item">
+                    <span class="contribution-label">Calories</span>
+                    <div class="contribution-bar">
+                      <div class="contribution-fill" id="meal-calories-fill"></div>
+                    </div>
+                    <span class="contribution-text"><strong id="meal-calories-value">--</strong> / <span id="meal-calories-target">--</span> cal (<span id="meal-calories-percent">--%</span>)</span>
+                  </div>
+                  <div class="contribution-item">
+                    <span class="contribution-label">Protein</span>
+                    <div class="contribution-bar">
+                      <div class="contribution-fill protein-fill" id="meal-protein-fill"></div>
+                    </div>
+                    <span class="contribution-text"><strong id="meal-protein-value">--</strong> / <span id="meal-protein-target">--</span> g (<span id="meal-protein-percent">--%</span>)</span>
+                  </div>
+                  <div class="contribution-item">
+                    <span class="contribution-label">Carbs</span>
+                    <div class="contribution-bar">
+                      <div class="contribution-fill carbs-fill" id="meal-carbs-fill"></div>
+                    </div>
+                    <span class="contribution-text"><strong id="meal-carbs-value">--</strong> / <span id="meal-carbs-target">--</span> g (<span id="meal-carbs-percent">--%</span>)</span>
+                  </div>
+                  <div class="contribution-item">
+                    <span class="contribution-label">Fat</span>
+                    <div class="contribution-bar">
+                      <div class="contribution-fill fat-fill" id="meal-fat-fill"></div>
+                    </div>
+                    <span class="contribution-text"><strong id="meal-fat-value">--</strong> / <span id="meal-fat-target">--</span> g (<span id="meal-fat-percent">--%</span>)</span>
+                  </div>
                 </div>
+                <p class="meal-rec-cta">
+                  <a href="index.html#contact" class="btn btn-primary">Order Your Meal Plan</a>
+                </p>
               </div>
             </div>
           </article>
